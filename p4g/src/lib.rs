@@ -6,8 +6,6 @@ use game::{GameProcess, Variables};
 
 static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
 
-
-
 #[no_mangle]
 pub extern "C" fn update() {
     let mut mutex = GAME_PROCESS.lock().unwrap();
