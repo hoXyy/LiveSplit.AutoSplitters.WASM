@@ -19,7 +19,7 @@ jobs:
                 targets: 'wasm32-unknown-unknown'
 
             - name: Build P4G Load Remover
-              run: cargo build --target wasm32-unknown-unknown --release --manifest-dir=p4g/Cargo.toml
+              run: cargo build --target wasm32-unknown-unknown --release --manifest-path=p4g/Cargo.toml
 
             - name: Create release
               uses: softprops/action-gh-release@v1
