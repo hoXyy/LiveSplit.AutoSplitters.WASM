@@ -1,3 +1,4 @@
+#![allow(unused_assignments)]
 use asr::timer;
 use std::sync::Mutex;
 

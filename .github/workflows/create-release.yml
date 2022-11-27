@@ -21,6 +21,9 @@ jobs:
             - name: Build P4G Load Remover
               run: cargo build --target wasm32-unknown-unknown --release --manifest-path=p4g/Cargo.toml
 
+            - name: Build SR2 AutoSplitter
+              run: cargo build --target wasm32-unknown-unknown --release --manifest-path=sr2/Cargo.toml
+
             - name: Create release
               uses: softprops/action-gh-release@v1
               with:
@@ -29,4 +32,6 @@ jobs:
                 prerelease: false
                 tag_name: release-${{ github.sha }}
                 release_name: Release ${{ github.sha }}
-                files: ./p4g/target/wasm32-unknown-unknown/release/p4g_load_remover.wasm
+                files: |
+                  ./p4g/target/wasm32-unknown-unknown/release/p4g_load_remover.wasm
+                  ./sr2/target/wasm32-unknown-unknown/release/sr2_autosplitter.wasm

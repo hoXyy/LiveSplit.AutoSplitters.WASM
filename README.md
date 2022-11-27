@@ -3,6 +3,7 @@
 
 # Autospliters in this repository:
 - Persona 4 Golden Load Remover (`p4g` folder)
+- Saints Row 2 Autosplitter and Load Remover (`sr2` folder)
 
 You can find all compiled binaries in the [latest release](https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/latest).
 
