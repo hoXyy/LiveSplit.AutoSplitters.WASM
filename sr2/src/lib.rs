@@ -1,4 +1,5 @@
 #![allow(unused_assignments)]
+use once_cell::sync::OnceCell;
 use asr::timer::{self, TimerState};
 use std::sync::Mutex;
 
@@ -6,6 +7,7 @@ pub mod game;
 use game::{GameProcess, Variables};
 
 static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
+static CURRENT_CUTSCENE: OnceCell<Mutex<String>> = OnceCell::new();
 
 #[no_mangle]
 pub extern "C" fn update() {
@@ -31,21 +33,21 @@ pub extern "C" fn update() {
             }
         };
 
-        let mut current_cutscene: &str = "";
-
         if let Some(cutscene) = vars.cutscene {
             let cutscene_text = Variables::get_as_string(&cutscene.current).unwrap();
-            current_cutscene = cutscene_text;
+            if cutscene_text != "" {
+                set_current_cutscene(cutscene_text.to_string());
+            }
         }
 
         if timer::state() == TimerState::Running {
             handle_load(&vars);
             handle_split(&vars);
-            handle_reset(current_cutscene);
+            handle_reset();
         }
 
         if timer::state() == TimerState::NotRunning {
-            handle_start(&vars, current_cutscene);
+            handle_start(&vars);
         }
     }
 }
@@ -90,16 +92,29 @@ fn handle_split(vars: &Variables) {
 }
 
 // TODO: Fix, doesn't work yet
-fn handle_start(vars: &Variables, current_cutscene: &str) {
-    if current_cutscene == "TSSP01-01.cscx" {
-        if vars.start_flag.current == 1 {
+fn handle_start(vars: &Variables) {
+    asr::print_message(&get_current_cutscene());
+    if get_current_cutscene() == "TSSP01-01.cscx" {
+        if vars.start_flag.current == 1 && vars.start_flag.current != vars.start_flag.old {
             timer::start();
         }
     }
 }
 
-fn handle_reset(current_cutscene: &str) {
-    if current_cutscene == "TSSP-INTRO2.cscx" {
+fn handle_reset() {
+    if get_current_cutscene() == "TSSP-INTRO2.cscx" {
         timer::reset();
     }
+}
+
+fn ensure_cutscene() -> &'static Mutex<String> {
+    CURRENT_CUTSCENE.get_or_init(|| Mutex::new(String::new()))
+}
+
+fn get_current_cutscene() -> String {
+    ensure_cutscene().lock().unwrap().clone()
+}
+
+fn set_current_cutscene(cutscene: String) {
+    *ensure_cutscene().lock().unwrap() = cutscene;
 }
