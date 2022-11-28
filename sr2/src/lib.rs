@@ -91,7 +91,7 @@ fn handle_split(vars: &Variables) {
     }
 }
 
-// TODO: Fix, doesn't work yet
+
 fn handle_start(vars: &Variables) {
     asr::print_message(&get_current_cutscene());
     if get_current_cutscene() == "TSSP01-01.cscx" {
