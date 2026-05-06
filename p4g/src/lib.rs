@@ -1,56 +1,45 @@
-#![allow(unused_assignments)]
-use asr::timer;
-use std::sync::Mutex;
+#![no_std]
+extern crate alloc;
+use asr::{future::next_tick, timer, Process};
 
-pub mod game;
-use game::{GameProcess, Variables};
+#[global_allocator]
+static ALLOC: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
 
-static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
+asr::async_main!(stable);
+asr::panic_handler!();
 
-#[no_mangle]
-pub extern "C" fn update() {
-    let mut mutex = GAME_PROCESS.lock().unwrap();
-    let mut game_open: bool = true; // Used to stop and resume game time on game launch/exit
+// only latest Steam supported for now
+const LOADING_ADDRESS: u64 = 0x51BCD12;
 
-    if mutex.is_none() {
-        // (Re)connect to the game and unpause game time
-        *mutex = GameProcess::connect("P4G");
-    } else {
-        let game = mutex.as_mut().unwrap();
-
-        // Make sure we're still connected to the game, pause game time if not
-        if !game.process.is_open() {
-            *mutex = None;
-            if game_open == true {
-                timer::pause_game_time();
-                game_open = false;
-            }
-
-            return;
-        }
-
-        let vars = match game.state.update(&mut game.process) {
-            Some(v) => v,
-            None => {
-                asr::print_message("Error updating state!");
-                return;
-            }
-        };
-
-        // Watch for game opening, and resume timer if it is open again
-        if game.process.is_open() && game_open == false {
-            timer::resume_game_time();
-            game_open = true;
-        }
-
-        handle_load(&vars);
-    }
-}
-
-fn handle_load(vars: &Variables) {
-    if vars.loading.current != 1 {
+async fn main() {
+    loop {
         timer::pause_game_time();
-    } else {
+
+        let process = Process::wait_attach("P4G.exe").await;
         timer::resume_game_time();
+
+        process
+            .until_closes(async {
+                if let Ok(base_address) = process.get_module_address("P4G.exe") {
+                    loop {
+                        if let Ok(loading) = process.read_pointer_path::<u16>(
+                            base_address,
+                            asr::PointerSize::Bit32,
+                            &[LOADING_ADDRESS],
+                        ) {
+                            match loading != 1 {
+                                true => {
+                                    timer::pause_game_time();
+                                }
+                                false => {
+                                    timer::resume_game_time();
+                                }
+                            }
+                        }
+                        next_tick().await;
+                    }
+                }
+            })
+            .await;
     }
 }
