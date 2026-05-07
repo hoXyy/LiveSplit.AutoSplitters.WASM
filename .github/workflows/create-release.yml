@@ -1,37 +1,40 @@
 name: Release
 on:
-    workflow_dispatch:
-    push:
-        branches:
-            - master
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Commit
-              uses: actions/checkout@v2
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v6
 
-            - name: Install Rust
-              uses: hecrj/setup-rust-action@v1
-              with:
-                rust-version: 'stable'
-                targets: 'wasm32-unknown-unknown'
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: 'stable'
+          targets: 'wasm32-unknown-unknown'
 
-            - name: Build P4G Load Remover
-              run: cargo build --target wasm32-unknown-unknown --release --manifest-path=p4g/Cargo.toml
+      - name: Build P4G Load Remover
+        run: cargo build --target wasm32-unknown-unknown --release
+          --manifest-path=p4g/Cargo.toml
 
-            - name: Build SR2 AutoSplitter
-              run: cargo build --target wasm32-unknown-unknown --release --manifest-path=sr2/Cargo.toml
+      - name: Build SR2 AutoSplitter
+        run: cargo build --target wasm32-unknown-unknown --release
+          --manifest-path=sr2/Cargo.toml
 
-            - name: Create release
-              uses: softprops/action-gh-release@v1
-              with:
-                generate_release_notes: true
-                draft: false
-                prerelease: false
-                tag_name: release-${{ github.sha }}
-                release_name: Release ${{ github.sha }}
-                files: |
-                  ./p4g/target/wasm32-unknown-unknown/release/p4g_load_remover.wasm
-                  ./sr2/target/wasm32-unknown-unknown/release/sr2_autosplitter.wasm
+      - name: Create release
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          tag_name: release-${{ github.sha }}
+          name: Release ${{ github.sha }}
+          files: |
+            ./p4g/target/wasm32-unknown-unknown/release/p4g_load_remover.wasm
+            ./sr2/target/wasm32-unknown-unknown/release/sr2_autosplitter.wasm
+
