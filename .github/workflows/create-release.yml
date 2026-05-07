@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Install Rust
         uses: hecrj/setup-rust-action@v2
@@ -27,13 +27,13 @@ jobs:
           --manifest-path=sr2/Cargo.toml
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           draft: false
           prerelease: false
           tag_name: release-${{ github.sha }}
-          release_name: Release ${{ github.sha }}
+          name: Release ${{ github.sha }}
           files: |
             ./p4g/target/wasm32-unknown-unknown/release/p4g_load_remover.wasm
             ./sr2/target/wasm32-unknown-unknown/release/sr2_autosplitter.wasm
