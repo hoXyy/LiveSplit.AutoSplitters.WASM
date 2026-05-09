@@ -22,7 +22,8 @@ jobs:
           components: clippy
 
       - name: Run Clippy
-        run: cargo clippy --manifest-path=sr2/Cargo.toml --all-features
+        run: cargo clippy --manifest-path=sr2/Cargo.toml --all-features --target
+          wasm32-unknown-unknown
 
   format:
     name: Check formatting

@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 asr = { git= "https://github.com/LiveSplit/asr" }
 
+[profile.release]
+panic = "abort"
