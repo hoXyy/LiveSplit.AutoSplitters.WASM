@@ -273,6 +273,16 @@ async fn main() {
                                     }
                                 }
                             }
+
+                            if settings.most_wanted {
+                                if state.most_wanted.current == state.most_wanted.old + 1 {
+                                    let key = format!("most_wanted {}", state.most_wanted.current);
+                                    if !done_splits.contains(&key) {
+                                        timer::split();
+                                        done_splits.push(key);
+                                    }
+                                }
+                            }
                         }
 
                         next_tick().await;
