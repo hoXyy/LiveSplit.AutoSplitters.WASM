@@ -208,28 +208,6 @@ async fn main() {
                         settings.update();
                         state.update(&process, base_address);
 
-                        timer::set_variable(
-                            "missions_attempted",
-                            &state.missions_attempted.current.to_string(),
-                        );
-
-                        timer::set_variable(
-                            "missions_passed",
-                            &state.missions_passed.current.to_string(),
-                        );
-
-                        timer::set_variable("loading", &state.loading.current.to_string());
-                        timer::set_variable("stunts", &state.stunts.current.to_string());
-                        timer::set_variable("flying_rats", &state.flying_rats.current.to_string());
-                        timer::set_variable(
-                            "white_loading_screen",
-                            &state.white_loading_screen.current.to_string(),
-                        );
-                        timer::set_variable(
-                            "video_editor",
-                            &state.video_editor.current.to_string(),
-                        );
-
                         // Loading check
                         match state.loading.current == 0 || state.video_editor.current == 256 {
                             true => {
