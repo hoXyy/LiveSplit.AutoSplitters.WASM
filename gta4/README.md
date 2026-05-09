@@ -1,5 +1,7 @@
 # GTA IV Autosplitter and Load Remover
 
+Only Patch 4 currently supported.
+
 # Download
 https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/latest/download/gta4_autosplitter.wasm
 
