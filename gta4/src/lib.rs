@@ -171,63 +171,59 @@ async fn main() {
 
                         let missions_check: bool = state.missions_attempted.current == 0;
 
-                        if settings.reset_timer {
-                            if start_check
-                                && missions_check
-                                && timer::state() == TimerState::Running
-                            {
-                                timer::reset();
-                            }
+                        if settings.reset_timer
+                            && start_check
+                            && missions_check
+                            && timer::state() == TimerState::Running
+                        {
+                            timer::reset();
                         }
 
-                        if settings.start_timer {
-                            if start_check
-                                && missions_check
-                                && timer::state() == TimerState::NotRunning
-                            {
-                                timer::start();
-                            }
+                        if settings.start_timer
+                            && start_check
+                            && missions_check
+                            && timer::state() == TimerState::NotRunning
+                        {
+                            timer::start();
                         }
 
                         if timer::state() == TimerState::Running {
-                            if settings.missions {
-                                if state.missions_passed.current == state.missions_passed.old + 1 {
-                                    let key = format!("mission {}", state.missions_passed.current);
-                                    if !done_splits.contains(&key) {
-                                        asr::print_message(&key);
-                                        timer::split();
-                                        done_splits.push(key);
-                                    }
+                            if settings.missions
+                                && state.missions_passed.current == state.missions_passed.old + 1
+                            {
+                                let key = format!("mission {}", state.missions_passed.current);
+                                if !done_splits.contains(&key) {
+                                    asr::print_message(&key);
+                                    timer::split();
+                                    done_splits.push(key);
                                 }
                             }
 
-                            if settings.stunts {
-                                if state.stunts.current == state.stunts.old + 1 {
-                                    let key = format!("stunt {}", state.stunts.current);
-                                    if !done_splits.contains(&key) {
-                                        timer::split();
-                                        done_splits.push(key);
-                                    }
+                            if settings.stunts && state.stunts.current == state.stunts.old + 1 {
+                                let key = format!("stunt {}", state.stunts.current);
+                                if !done_splits.contains(&key) {
+                                    timer::split();
+                                    done_splits.push(key);
                                 }
                             }
 
-                            if settings.flying_rats {
-                                if state.flying_rats.current == state.flying_rats.old + 1 {
-                                    let key = format!("rat {}", state.flying_rats.current);
-                                    if !done_splits.contains(&key) {
-                                        timer::split();
-                                        done_splits.push(key);
-                                    }
+                            if settings.flying_rats
+                                && state.flying_rats.current == state.flying_rats.old + 1
+                            {
+                                let key = format!("rat {}", state.flying_rats.current);
+                                if !done_splits.contains(&key) {
+                                    timer::split();
+                                    done_splits.push(key);
                                 }
                             }
 
-                            if settings.most_wanted {
-                                if state.most_wanted.current == state.most_wanted.old + 1 {
-                                    let key = format!("most_wanted {}", state.most_wanted.current);
-                                    if !done_splits.contains(&key) {
-                                        timer::split();
-                                        done_splits.push(key);
-                                    }
+                            if settings.most_wanted
+                                && state.most_wanted.current == state.most_wanted.old + 1
+                            {
+                                let key = format!("most_wanted {}", state.most_wanted.current);
+                                if !done_splits.contains(&key) {
+                                    timer::split();
+                                    done_splits.push(key);
                                 }
                             }
                         }
