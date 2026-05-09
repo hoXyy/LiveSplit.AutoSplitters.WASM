@@ -16,8 +16,8 @@ jobs:
             artifact: p4g_load_remover
           - folder: sr2
             artifact: sr2_autosplitter
-          # - folder: gta4
-          #   artifact: gta4_autosplitter
+          - folder: gta4
+            artifact: gta4_autosplitter
 
     steps:
       - name: Checkout Commit
