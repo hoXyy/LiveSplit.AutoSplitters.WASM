@@ -4,17 +4,14 @@ extern crate alloc;
 #[global_allocator]
 static ALLOC: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
 
-use alloc::{
-    format,
-    string::{String, ToString},
-    vec::Vec,
-};
+use alloc::{format, string::String, vec::Vec};
 use asr::{
     future::next_tick,
     settings::Gui,
     timer::{self, TimerState},
     Address, Process,
 };
+use asr_watcher::Watcher;
 
 asr::async_main!(stable);
 asr::panic_handler!();
@@ -63,56 +60,6 @@ const MEMORY_ADDRESSES: MemoryAddresses = MemoryAddresses {
     flying_rats: 0x00C615D0,
     video_editor: 0xBCCDE0,
 };
-
-const GRACE_PERIOD_TICKS: u32 = 90;
-
-#[derive(Copy, Clone)]
-struct Watcher<T: Copy + Default> {
-    current: T,
-    old: T,
-    valid: bool,
-    invalidated_ticks: Option<u32>,
-}
-
-impl<T: Copy + Default> Default for Watcher<T> {
-    fn default() -> Self {
-        Self {
-            current: T::default(),
-            old: T::default(),
-            valid: false,
-            invalidated_ticks: None,
-        }
-    }
-}
-
-impl<T: Copy + Default> Watcher<T> {
-    fn update_from(&mut self, result: Result<T, impl core::fmt::Debug>) {
-        match result {
-            Ok(v) => self.update(v),
-            Err(_) => self.invalidate(),
-        }
-    }
-
-    fn invalidate(&mut self) {
-        if self.valid && self.invalidated_ticks.is_none() {
-            self.invalidated_ticks = Some(0)
-        } else if let Some(ref mut ticks) = self.invalidated_ticks {
-            *ticks += 1;
-            if *ticks > GRACE_PERIOD_TICKS {
-                self.valid = false;
-                self.old = T::default();
-                self.current = T::default();
-                self.invalidated_ticks = None;
-            }
-        }
-    }
-
-    fn update(&mut self, value: T) {
-        self.old = if self.valid { self.current } else { value };
-        self.current = value;
-        self.valid = true;
-    }
-}
 
 #[derive(Default, Copy, Clone)]
 struct GameState {
