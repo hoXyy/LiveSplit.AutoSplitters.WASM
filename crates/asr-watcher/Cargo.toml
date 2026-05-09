@@ -1,0 +1,10 @@
+[package]
+name = "asr-watcher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+asr = { git= "https://github.com/LiveSplit/asr" }
+
+[profile.release]
+panic = "abort"

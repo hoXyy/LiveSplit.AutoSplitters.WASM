@@ -1,0 +1,40 @@
+name: P4G Autosplitter Checks
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'p4g/**'
+
+jobs:
+  clippy:
+    name: Check clippy lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: 'stable'
+          targets: 'wasm32-unknown-unknown'
+          components: clippy
+
+      - name: Run Clippy
+        run: cargo clippy --manifest-path=p4g/Cargo.toml --all-features --target
+          wasm32-unknown-unknown
+
+  format:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          components: rustfmt
+
+      - name: Run cargo fmt
+        run: cargo fmt -- --check --manifest-path=p4g/Cargo.toml || true

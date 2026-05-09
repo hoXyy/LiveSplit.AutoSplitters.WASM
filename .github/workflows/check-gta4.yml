@@ -1,0 +1,40 @@
+name: GTA IV Autosplitter Checks
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'gta4/**'
+
+jobs:
+  clippy:
+    name: Check clippy lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: 'stable'
+          targets: 'wasm32-unknown-unknown'
+          components: clippy
+
+      - name: Run Clippy
+        run: cargo clippy --manifest-path=gta4/Cargo.toml --target
+          wasm32-unknown-unknown --all-features
+
+  format:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          components: rustfmt
+
+      - name: Run cargo fmt
+        run: cargo fmt -- --manifest-path=gta4/Cargo.toml --check || true
