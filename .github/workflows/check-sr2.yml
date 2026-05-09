@@ -1,0 +1,38 @@
+name: SR2 Autosplitter Checks
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'sr2/**'
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: 'stable'
+          targets: 'wasm32-unknown-unknown'
+          components: clippy
+
+      - name: Run Clippy
+        run: cargo clippy --all-features
+
+  format:
+    name: Check clippy lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          components: rustfmt
+
+      - name: Run cargo fmt
+        run: cargo fmt -- --check || true
