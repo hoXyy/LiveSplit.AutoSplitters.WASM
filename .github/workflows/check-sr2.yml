@@ -21,7 +21,7 @@ jobs:
           components: clippy
 
       - name: Run Clippy
-        run: cargo clippy --all-features
+        run: cargo clippy --manifest-path=sr2/Cargo.toml --all-features
 
   format:
     name: Check clippy lints
@@ -35,4 +35,4 @@ jobs:
           components: rustfmt
 
       - name: Run cargo fmt
-        run: cargo fmt -- --check || true
+        run: cargo fmt -- --check --manifest-path=sr2/Cargo.toml || true

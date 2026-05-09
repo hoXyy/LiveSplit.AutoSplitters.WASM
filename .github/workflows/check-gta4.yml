@@ -9,6 +9,7 @@ on:
 
 jobs:
   clippy:
+    name: Check clippy lints
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -21,10 +22,10 @@ jobs:
           components: clippy
 
       - name: Run Clippy
-        run: cargo clippy --all-features
+        run: cargo clippy --manifest-path=gta4/Cargo.toml --all-features
 
   format:
-    name: Check clippy lints
+    name: Check formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -35,4 +36,4 @@ jobs:
           components: rustfmt
 
       - name: Run cargo fmt
-        run: cargo fmt -- --check || true
+        run: cargo fmt -- --manifest-path=gta4/Cargo.toml --check || true
