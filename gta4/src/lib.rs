@@ -9,9 +9,9 @@ use asr::{
     future::next_tick,
     settings::Gui,
     timer::{self, TimerState},
+    watcher::Watcher,
     Address, Process,
 };
-use asr_watcher::Watcher;
 
 asr::async_main!(stable);
 asr::panic_handler!();
@@ -83,53 +83,51 @@ impl GameState {
     }
 
     fn update(&mut self, process: &Process, base_address: Address) {
-        self.loading.update_from(Self::read::<u32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.loading],
-        ));
+        self.loading
+            .update(Self::read::<u32>(process, base_address, &[MEMORY_ADDRESSES.loading]).ok());
 
-        self.missions_passed.update_from(Self::read::<i32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.missions_passed, 0x10],
-        ));
+        self.missions_passed.update(
+            Self::read::<i32>(
+                process,
+                base_address,
+                &[MEMORY_ADDRESSES.missions_passed, 0x10],
+            )
+            .ok(),
+        );
 
-        self.missions_attempted.update_from(Self::read::<i32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.missions_attempted, 0x10],
-        ));
+        self.missions_attempted.update(
+            Self::read::<i32>(
+                process,
+                base_address,
+                &[MEMORY_ADDRESSES.missions_attempted, 0x10],
+            )
+            .ok(),
+        );
 
-        self.white_loading_screen.update_from(Self::read::<u32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.white_loading_screen],
-        ));
+        self.white_loading_screen.update(
+            Self::read::<u32>(
+                process,
+                base_address,
+                &[MEMORY_ADDRESSES.white_loading_screen],
+            )
+            .ok(),
+        );
 
-        self.stunts.update_from(Self::read::<i32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.stunts, 0x10],
-        ));
+        self.stunts.update(
+            Self::read::<i32>(process, base_address, &[MEMORY_ADDRESSES.stunts, 0x10]).ok(),
+        );
 
-        self.most_wanted.update_from(Self::read::<i32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.most_wanted, 0x10],
-        ));
+        self.most_wanted.update(
+            Self::read::<i32>(process, base_address, &[MEMORY_ADDRESSES.most_wanted, 0x10]).ok(),
+        );
 
-        self.flying_rats.update_from(Self::read::<i32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.flying_rats, 0x10],
-        ));
+        self.flying_rats.update(
+            Self::read::<i32>(process, base_address, &[MEMORY_ADDRESSES.flying_rats, 0x10]).ok(),
+        );
 
-        self.video_editor.update_from(Self::read::<i32>(
-            process,
-            base_address,
-            &[MEMORY_ADDRESSES.video_editor],
-        ));
+        self.video_editor.update(
+            Self::read::<i32>(process, base_address, &[MEMORY_ADDRESSES.video_editor]).ok(),
+        );
     }
 }
 
@@ -155,8 +153,43 @@ async fn main() {
                         settings.update();
                         state.update(&process, base_address);
 
+                        let Some(loading) = state.loading.pair.as_ref() else {
+                            next_tick().await;
+                            continue;
+                        };
+                        let Some(missions_passed) = state.missions_passed.pair.as_ref() else {
+                            next_tick().await;
+                            continue;
+                        };
+                        let Some(missions_attempted) = state.missions_attempted.pair.as_ref()
+                        else {
+                            next_tick().await;
+                            continue;
+                        };
+                        let Some(stunts) = state.stunts.pair.as_ref() else {
+                            next_tick().await;
+                            continue;
+                        };
+                        let Some(most_wanted) = state.most_wanted.pair.as_ref() else {
+                            next_tick().await;
+                            continue;
+                        };
+                        let Some(flying_rats) = state.flying_rats.pair.as_ref() else {
+                            next_tick().await;
+                            continue;
+                        };
+                        let Some(white_loading_screen) = state.white_loading_screen.pair.as_ref()
+                        else {
+                            next_tick().await;
+                            continue;
+                        };
+                        let Some(video_editor) = state.video_editor.pair.as_ref() else {
+                            next_tick().await;
+                            continue;
+                        };
+
                         // Loading check
-                        match state.loading.current == 0 || state.video_editor.current == 256 {
+                        match loading.current == 0 || video_editor.current == 256 {
                             true => {
                                 timer::pause_game_time();
                             }
@@ -165,11 +198,11 @@ async fn main() {
                             }
                         }
 
-                        let start_check: bool = state.white_loading_screen.current == 0
-                            && state.white_loading_screen.old != 0
-                            && state.loading.current == 0;
+                        let start_check: bool = white_loading_screen.current == 0
+                            && white_loading_screen.old != 0
+                            && loading.current == 0;
 
-                        let missions_check: bool = state.missions_attempted.current == 0;
+                        let missions_check: bool = missions_attempted.current == 0;
 
                         if settings.reset_timer
                             && start_check
@@ -189,9 +222,9 @@ async fn main() {
 
                         if timer::state() == TimerState::Running {
                             if settings.missions
-                                && state.missions_passed.current == state.missions_passed.old + 1
+                                && missions_passed.current == missions_passed.old + 1
                             {
-                                let key = format!("mission {}", state.missions_passed.current);
+                                let key = format!("mission {}", missions_passed.current);
                                 if !done_splits.contains(&key) {
                                     asr::print_message(&key);
                                     timer::split();
@@ -199,28 +232,24 @@ async fn main() {
                                 }
                             }
 
-                            if settings.stunts && state.stunts.current == state.stunts.old + 1 {
-                                let key = format!("stunt {}", state.stunts.current);
+                            if settings.stunts && stunts.current == stunts.old + 1 {
+                                let key = format!("stunt {}", stunts.current);
                                 if !done_splits.contains(&key) {
                                     timer::split();
                                     done_splits.push(key);
                                 }
                             }
 
-                            if settings.flying_rats
-                                && state.flying_rats.current == state.flying_rats.old + 1
-                            {
-                                let key = format!("rat {}", state.flying_rats.current);
+                            if settings.flying_rats && flying_rats.current == flying_rats.old + 1 {
+                                let key = format!("rat {}", flying_rats.current);
                                 if !done_splits.contains(&key) {
                                     timer::split();
                                     done_splits.push(key);
                                 }
                             }
 
-                            if settings.most_wanted
-                                && state.most_wanted.current == state.most_wanted.old + 1
-                            {
-                                let key = format!("most_wanted {}", state.most_wanted.current);
+                            if settings.most_wanted && most_wanted.current == most_wanted.old + 1 {
+                                let key = format!("most_wanted {}", most_wanted.current);
                                 if !done_splits.contains(&key) {
                                     timer::split();
                                     done_splits.push(key);
