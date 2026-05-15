@@ -32,13 +32,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "asr-watcher"
-version = "0.1.0"
-dependencies = [
- "asr",
-]
-
-[[package]]
 name = "bytemuck"
 version = "1.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -89,7 +82,6 @@ name = "gta4-autosplitter"
 version = "0.1.0"
 dependencies = [
  "asr",
- "asr-watcher",
  "bytemuck",
  "dlmalloc",
 ]
