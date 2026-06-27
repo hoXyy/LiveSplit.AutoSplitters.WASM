@@ -11,7 +11,7 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/LiveSplit/asr#04992790cc920b0f41895b220835f57abff5ce53"
+source = "git+https://github.com/LiveSplit/asr#a7ecee85abad7263bfa2150d3821f3d2ea69fe84"
 dependencies = [
  "arrayvec",
  "bytemuck",
