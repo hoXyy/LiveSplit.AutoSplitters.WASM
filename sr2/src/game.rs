@@ -1,6 +1,6 @@
 use asr::{
     watcher::{Pair, Watcher},
-    Address, Process,
+    Address, PointerSize, Process,
 };
 
 pub struct GameProcess {
@@ -23,14 +23,14 @@ impl GameProcess {
 pub struct Variable<T> {
     var: Watcher<T>,
     base_address: Address,
-    address_path: Vec<u32>,
+    address_path: Vec<u64>,
 }
 
 impl<T: bytemuck::Pod + std::fmt::Debug> Variable<T> {
     pub fn update(&mut self, process: &Process) -> Option<&Pair<T>> {
         self.var.update(
             process
-                .read_pointer_path32(self.base_address.0.try_into().unwrap(), &self.address_path)
+                .read_pointer_path(self.base_address, PointerSize::Bit32, &self.address_path)
                 .ok(),
         )
     }
@@ -68,7 +68,7 @@ pub struct State {
 impl State {
     fn setup(base_address: Address) -> Self {
         Self {
-            cutscene: Variable { 
+            cutscene: Variable {
                 var: Watcher::new(),
                 base_address,
                 address_path: vec![0x02127D10, 0x4, 0x0],
@@ -203,7 +203,7 @@ impl State {
 }
 
 impl State {
-    pub fn update(&mut self, process: &Process) -> Option<Variables> {
+    pub fn update(&mut self, process: &Process) -> Option<Variables<'_>> {
         Some(Variables {
             cutscene: self.cutscene.update(process),
             start_flag: self.start_flag.update(process)?,

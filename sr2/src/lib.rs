@@ -1,6 +1,6 @@
 #![allow(unused_assignments)]
-use once_cell::sync::OnceCell;
 use asr::timer::{self, TimerState};
+use once_cell::sync::OnceCell;
 use std::sync::Mutex;
 
 pub mod game;
@@ -90,7 +90,6 @@ fn handle_split(vars: &Variables) {
         timer::split();
     }
 }
-
 
 fn handle_start(vars: &Variables) {
     asr::print_message(&get_current_cutscene());
