@@ -123,5 +123,5 @@ jobs:
         with:
           tag_name: ${{ matrix.script.tag }}-latest
           name: ${{ matrix.script.tag }} (latest)
-          generate_release_notes: true
+          generate_release_notes: false
           files: artifacts/*.wasm
