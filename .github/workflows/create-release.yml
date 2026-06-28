@@ -23,6 +23,8 @@ jobs:
             artifact: sr2_autosplitter
           - folder: gta4
             artifact: gta4_autosplitter
+          - folder: p3p
+            artifact: p3p_load_remover
 
     steps:
       - name: Checkout Commit
@@ -79,6 +81,9 @@ jobs:
           - folder: gta4
             artifact: gta4_autosplitter
             tag: gta4
+          - folder: p3p
+            artifact: p3p_load_remover
+            tag: p3p
 
     steps:
       - name: Checkout Commit
