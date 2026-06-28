@@ -27,21 +27,36 @@ jobs:
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" != "push" ] || [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ${{ matrix.script.folder }}; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Install Rust
+        if: steps.changes.outputs.changed == 'true'
         uses: hecrj/setup-rust-action@v2
         with:
           rust-version: 'stable'
           targets: 'wasm32-unknown-unknown'
 
       - name: Build ${{ matrix.script.folder }}
+        if: steps.changes.outputs.changed == 'true'
         id: build
         continue-on-error: true
         run: cargo build --target wasm32-unknown-unknown --release --manifest-path=${{
           matrix.script.folder }}/Cargo.toml
 
       - name: Upload artifact
-        if: steps.build.outcome == 'success'
+        if: steps.changes.outputs.changed == 'true' && steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.script.artifact }}
@@ -55,19 +70,36 @@ jobs:
       fail-fast: false
       matrix:
         script:
-          - artifact: p4g_load_remover
+          - folder: p4g
+            artifact: p4g_load_remover
             tag: p4g
-          - artifact: sr2_autosplitter
+          - folder: sr2
+            artifact: sr2_autosplitter
             tag: sr2
-          - artifact: gta4_autosplitter
+          - folder: gta4
+            artifact: gta4_autosplitter
             tag: gta4
 
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" != "push" ] || [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ${{ matrix.script.folder }}; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download artifact
         id: download
+        if: steps.changes.outputs.changed == 'true'
         continue-on-error: true
         uses: actions/download-artifact@v8
         with:
@@ -75,13 +107,13 @@ jobs:
           path: artifacts/
 
       - name: Tag commit
-        if: steps.download.outcome == 'success'
+        if: steps.changes.outputs.changed == 'true' && steps.download.outcome == 'success'
         run: |
-          git tag ${{ matrix.script.tag }}-${{ github.sha }}
-          git push origin ${{ matrix.script.tag }}-${{ github.sha }}
+          git tag ${{ matrix.script.tag }}-${{ github.sha }} || true
+          git push origin ${{ matrix.script.tag }}-${{ github.sha }} || true
 
       - name: Release (latest)
-        if: steps.download.outcome == 'success'
+        if: steps.changes.outputs.changed == 'true' && steps.download.outcome == 'success'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ matrix.script.tag }}-latest
