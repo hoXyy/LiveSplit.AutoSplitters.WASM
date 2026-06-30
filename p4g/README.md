@@ -1,7 +1,7 @@
 # Persona 4 Golden Load Remover
 
 # Download
-https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/latest/download/p4g_load_remover.wasm
+https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/download/p4g-latest/p4g_load_remover.wasm
 
 # Build
 1. Get Rust from https://rustup.rs.
