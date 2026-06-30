@@ -1,7 +1,7 @@
 # GTA III Autosplitter
 
 ## Download
-https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/gta3-latest/download/gta3_autosplitter.wasm
+https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/download/gta3-latest/gta3_autosplitter.wasm
 
 ## Supported versions
 
