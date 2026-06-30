@@ -16,21 +16,18 @@ async fn main() {
     loop {
         timer::pause_game_time();
 
-        let process = retry(|| {
+        let (process_name, process) = retry(|| {
             ["P3P.exe", "p3p_sln_DT_m.exe"]
                 .into_iter()
-                .find_map(Process::attach)
+                .find_map(|name| Process::attach(name).map(|proc| (name, proc)))
         })
         .await;
+
         timer::resume_game_time();
 
-        let mut process_name = "P3P.exe";
-
-        // can't just get the process name since on linux it's just wine64-preloader
-        let loading_address: u64 = if process.get_module_address("p3p_sln_DT_m.exe").is_err() {
+        let loading_address: u64 = if process_name == "P4G.exe" {
             0x9CF134
         } else {
-            process_name = "p3p_sln_DT_m.exe";
             0x130AF74
         };
 
