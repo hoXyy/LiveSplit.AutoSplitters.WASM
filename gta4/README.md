@@ -3,7 +3,7 @@
 Only Patch 4 currently supported.
 
 # Download
-https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/latest/download/gta4_autosplitter.wasm
+https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/download/gta4-latest/gta4_autosplitter.wasm
 
 # Build
 1. Get Rust from https://rustup.rs.

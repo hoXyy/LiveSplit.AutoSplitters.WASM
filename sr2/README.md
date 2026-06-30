@@ -1,7 +1,7 @@
 # Saints Row 2 Autosplitter and Load Remover
 
 # Download
-https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/latest/download/sr2_autosplitter.wasm
+https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/download/sr2-latest/sr2_autosplitter.wasm
 
 # Build
 1. Get Rust from https://rustup.rs.

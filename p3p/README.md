@@ -1,7 +1,7 @@
 # Persona 3 Portable Load Remover
 
 # Download
-https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/p3p-latest/download/p3p_load_remover.wasm
+https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/download/p3p-latest/p3p_load_remover.wasm
 
 # Build
 1. Get Rust from https://rustup.rs.
