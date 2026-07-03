@@ -210,6 +210,89 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
 pub const ERRANDS_COUNT: u64 = 50;
 pub const GNOMES_COUNT: u64 = 25;
 
+pub const ERRANDS: &[(&str, &str, &[(&str, &str, &str)])] = &[
+    (
+        "ER_BA",
+        "Bullworth Academy",
+        &[
+            ("ER_1", "Escort Algie", "Escort Algie back to the Library."),
+            ("ER_2", "Bog Roll", "Bring the roll of toilet paper for Vance."),
+            ("ER_3", "Bog Roll 2", "Bring the roll of toilet paper for Max."),
+            ("ER_6", "Takin' Out The Trash", "Stuff three students in trash cans."),
+            ("ER_8", "Blow The Toilet", "Throw a firecracker in a toilet."),
+            ("ER_13", "Egg the Boys Dorm", "Hit the outside of the boys dorm with three eggs."),
+            ("ER_14", "Egg the Girls Dorm", "Hit the outside of the girls dorm with three eggs."),
+            ("ER_19", "Fire Alarm", "Pull the fire alarm."),
+            ("ER_23", "Locker Stuffing", "Stuff two kids into lockers."),
+            ("ER_29", "Locksmith", "Break in to three lockers."),
+            ("ER_33", "Secret Admirer", "Constantinos wants Jimmy to break into Gloria's locker and put chocolates in it."),
+            ("ER_34", "Secret Admirer 2", "Melody wants Jimmy to break into Trevor's locker and put chocolates in it."),
+            ("ER_45", "Details", "Escort Christy back to the girls dorm."),
+        ],
+    ),
+    (
+        "ER_BT",
+        "Bullworth Town",
+        &[
+            ("ER_0", "Lost Jacket", "Retrieve Algie's jacket and bring it back to him."),
+            ("ER_4", "Stolen Bike", "Chase the guy on the stolen bike."),
+            ("ER_11", "Detective Jimmy", "Take a photo of a dirty cop."),
+            ("ER_12", "Free Drugs", "Smash the trash cans to find the hobos medication."),
+            ("ER_26", "Lost Dog", "Dr. Bambillo wants Jimmy to find his lost dog."),
+            ("ER_27", "Lost Dog 2", "Bethany wants Jimmy to find her lost dog."),
+            ("ER_30", "Water Balloons", "Hit three people with water balloons."),
+            ("ER_39", "Thank You For Not Smoking", "Beat up the two Greasers on the roof of the gas station."),
+            ("ER_41", "Weird Hobo", "Give the hobo some change."),
+        ],
+    ),
+    (
+        "ER_BV",
+        "Old Bullworth Vale",
+        &[
+            ("ER_7", "Carnival Photos", "Take pictures of the Fun House, the Big Squid and Round The World."),
+            ("ER_9", "Crab Traps", "Swim out in the bay and collect the crabs."),
+            ("ER_17", "Great Escape", "Escort Mrs. Lisburn to the park entrance."),
+            ("ER_18", "Fast Food", "Make the three fast food deliverys."),
+            ("ER_22", "Balancing Act", "Check out the island beyond the shipwreck."),
+            ("ER_24", "Lost Teddy Bear", "Beat up the bully that stole her Teddy Bear."),
+            ("ER_36", "Shipwreck", "Swim to the shipwreck."),
+            ("ER_42", "Swim Meet", "Swim out and around the bouy and back before the timer runs out."),
+            ("ER_44", "Bullworth Vale Tag", "Spray any three tags in Bullworth Vale."),
+            ("ER_48", "Goin' Postal", "Pick up a package and bring it back to Mr. Svenson"),
+            ("ER_49", "The Widow", "Mrs. Lisburn wants Jimmy to pick six flowers to put on her late husband's grave."),
+        ],
+    ),
+    (
+        "ER_NC",
+        "New Coventry",
+        &[
+            ("ER_16", "Egg The Tenements", "Hit the Greasers building with three eggs in the tenements area."),
+            ("ER_20", "Escort service 2", "Walk Christy to the In and Out Motel."),
+            ("ER_21", "Help The Elderly", "Escort Miss Abby to the tenements."),
+            ("ER_28", "Tag Proof", "Take a picture of someone spraying a tag."),
+            ("ER_32", "Rat Infestation", "Kill the 18 rats inside the tenements."),
+            ("ER_38", "Vehicular Vandalism", "Break 11 parts of the car before the timer runs out."),
+            ("ER_40", "Spazz Delivery", "Deliver the package to a man in Blue Skies."),
+            ("ER_43", "New Coventry Tag", "Spray any three tags in New Coventry."),
+            ("ER_46", "Tenement Fires", "Take the fire extinguisher and put out the 6 fires inside the tenements."),
+            ("ER_47", "Infidelity", "Go to the In and Out Motel and take a picture of Buckingham's wife kissing the other guy without being seen."),
+        ],
+    ),
+    (
+        "ER_BSI",
+        "Blue Skies Industrial Park",
+        &[
+            ("ER_5", "Cable Guy", "Destroy the four satellite dishes."),
+            ("ER_10", "Loons On The Loose", "Find the two escaped patients and lead them back to the Asylum."),
+            ("ER_15", "Greasy Eggs", "Egg the two Greasers."),
+            ("ER_25", "Lost Cargo", "Swim out to the sunken boat and retrieve the man's package."),
+            ("ER_31", "Rat Poison", "Kill the rats at docks."),
+            ("ER_35", "Shipping and Receiving", "Deliver the package to the man near the Police Station."),
+            ("ER_37", "Vehicular Vandalism 2", "Destroy the 11 parts of the car."),
+        ],
+    ),
+];
+
 pub const GNOMES_TOOLTIPS: [&str; 25] = [
     "Bullworth Town\nIn the hedges in front of Police HQ.",
     "Vale\nIn the bushy corner of the front of the church exterior.",

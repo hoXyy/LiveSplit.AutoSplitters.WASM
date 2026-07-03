@@ -6,7 +6,7 @@ use asr::settings::{
 
 use crate::{
     helpers::get_gnome_key,
-    missions::{ERRANDS_COUNT, GNOMES_COUNT, GNOMES_TOOLTIPS, MISSIONS},
+    missions::{ERRANDS, GNOMES_COUNT, GNOMES_TOOLTIPS, MISSIONS},
 };
 
 pub fn register_settings() {
@@ -49,14 +49,27 @@ pub fn register_settings() {
 
     // Collectibles
     add_title("collectibles", "Collectibles", 0);
+    add_title("gnomes", "Gnomes", 1);
     add_bool("all_gnomes", "All Gnomes", false);
 
-    add_title("each_gnome", "Gnomes", 1);
+    add_title("each_gnome", "Each", 2);
     for id in 0..GNOMES_COUNT {
         let setting_key = get_gnome_key(id);
         let setting_title = format!("Gnome {}", id + 1);
         add_bool(&setting_key, &setting_title, false);
         set_tooltip(&setting_key, GNOMES_TOOLTIPS[id as usize]);
+    }
+
+    add_title("errands", "Errands", 1);
+    add_bool("all_errands", "All Errands", false);
+
+    add_title("each_errand", "Each", 2);
+    for &(key, title, errands) in ERRANDS {
+        add_title(key, title, 3);
+        for &(key, title, tooltip) in errands {
+            add_bool(key, title, false);
+            set_tooltip(key, tooltip);
+        }
     }
 
     set_tooltip("M_1_01a", "Additional split after going to the Principal.");
