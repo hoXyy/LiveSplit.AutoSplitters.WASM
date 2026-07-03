@@ -209,3 +209,31 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
 
 pub const ERRANDS_COUNT: u64 = 50;
 pub const GNOMES_COUNT: u64 = 25;
+
+pub const GNOMES_TOOLTIPS: [&str; 25] = [
+    "Bullworth Town\nIn the hedges in front of Police HQ.",
+    "Vale\nIn the bushy corner of the front of the church exterior.",
+    "Vale\nTad's yard, near his gazebo.",
+    "Vale\nTad's front yard, near a small vine-grown lattice.",
+    "Blue Skies\nBackyard next to tattoo shop.",
+    "Vale\nHappy Endings Retirement home, in the front yard near the pond.",
+    "Vale\nNext to a mailbox at the house on the left\nafter the intersection leading from Bullworth Town bridge.",
+    "Vale\nFront yard of house near the cul-de-sac,\nEnter through the front gate.",
+    "School\nSide lawn of Harrington House you mow during detention.",
+    "Vale\nIn the yard of the second 'Lawn Mowing' with the four bird baths",
+    "Vale\nYard across the street from Tad's house.",
+    "Vale\nNext to the front door of the house with the epic jump\non the back patio that sends you to the beach",
+    "Vale\nInside the little shed in the park near the port-a-potty\nLeft one",
+    "Vale\nInside the little shed in the park near the port-a-potty\nRight one",
+    "Blue skies\nMain asylum grounds beside 'the watcher' statue.",
+    "Vale\nFront porch of fenced-in house across the street from the mowing job house.\nJump the missing fence section on the west side of the house.",
+    "Vale\nOffshore on the beach facing the sunken pirate ship.",
+    "Vale\nNext to the front door of the house due east of the retirement home.",
+    "Blue Skies\nOn the barge off the industrial docks.",
+    "Vale\nNext to Tad's standalone garage.",
+    "Vale\nOn the west side of the house across from Tad's garage.",
+    "Vale\nBeside the front porch of the first house on the left after the bridge\nthat leads from Bullworth Town to Vale.",
+    "Vale\nBesides the entrace to Bullworth Park. Near the retirment home.\nLeft side.",
+    "Vale\nBesides the entrace to Bullworth Park.\nNear the retirment home.Right side.",
+    "Vale\nBeside the southeast entrace to Bullworth Park."
+];

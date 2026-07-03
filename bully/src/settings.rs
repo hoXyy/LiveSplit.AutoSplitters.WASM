@@ -6,7 +6,7 @@ use asr::settings::{
 
 use crate::{
     helpers::get_gnome_key,
-    missions::{ERRANDS_COUNT, GNOMES_COUNT, MISSIONS},
+    missions::{ERRANDS_COUNT, GNOMES_COUNT, GNOMES_TOOLTIPS, MISSIONS},
 };
 
 pub fn register_settings() {
@@ -56,6 +56,7 @@ pub fn register_settings() {
         let setting_key = get_gnome_key(id);
         let setting_title = format!("Gnome {}", id + 1);
         add_bool(&setting_key, &setting_title, false);
+        set_tooltip(&setting_key, GNOMES_TOOLTIPS[id as usize]);
     }
 
     set_tooltip("M_1_01a", "Additional split after going to the Principal.");
