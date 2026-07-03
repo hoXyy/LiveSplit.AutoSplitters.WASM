@@ -89,14 +89,12 @@ async fn main() {
                                 for &(key, _, _, default_setting) in missions {
                                     if let Some(mission_watcher) = watchers.missions.get(key) {
                                         if let Some(mission_pair) = mission_watcher.pair {
+                                            // special logic for the prep challenge splits
                                             if key == "M_2_03R" {
-                                                if setting_enabled(
-                                                    &settings_map,
-                                                    "M_2_03R1",
-                                                    default_setting,
-                                                ) && !split_guard
-                                                    .missions_done
-                                                    .contains_key("M_2_03R1")
+                                                if setting_enabled(&settings_map, "M_2_03R1", false)
+                                                    && !split_guard
+                                                        .missions_done
+                                                        .contains_key("M_2_03R1")
                                                 {
                                                     if mission_pair.current == 1
                                                         && mission_pair.old == 0
@@ -108,13 +106,10 @@ async fn main() {
                                                     }
                                                 }
 
-                                                if setting_enabled(
-                                                    &settings_map,
-                                                    "M_2_03R2",
-                                                    default_setting,
-                                                ) && !split_guard
-                                                    .missions_done
-                                                    .contains_key("M_2_03R2")
+                                                if setting_enabled(&settings_map, "M_2_03R2", false)
+                                                    && !split_guard
+                                                        .missions_done
+                                                        .contains_key("M_2_03R2")
                                                 {
                                                     if mission_pair.current == 2
                                                         && mission_pair.old == 1
@@ -126,13 +121,10 @@ async fn main() {
                                                     }
                                                 }
 
-                                                if setting_enabled(
-                                                    &settings_map,
-                                                    "M_2_03R3",
-                                                    default_setting,
-                                                ) && !split_guard
-                                                    .missions_done
-                                                    .contains_key("M_2_03R3")
+                                                if setting_enabled(&settings_map, "M_2_03R3", false)
+                                                    && !split_guard
+                                                        .missions_done
+                                                        .contains_key("M_2_03R3")
                                                 {
                                                     if mission_pair.current == 3
                                                         && mission_pair.old == 2
@@ -165,7 +157,7 @@ async fn main() {
                                 let key = get_gnome_key(i);
                                 if let Some(gnome_watcher) = watchers.gnomes.get(&key) {
                                     if let Some(pair) = gnome_watcher.pair {
-                                        if pair.increased() {
+                                        if pair.current == 1 {
                                             if setting_enabled(&settings_map, &key, false)
                                                 && !split_guard.gnomes_done.contains_key(&key)
                                             {
