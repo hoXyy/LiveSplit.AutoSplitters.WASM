@@ -1,0 +1,40 @@
+name: Bully Autosplitter Checks
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'bully/**'
+
+jobs:
+  clippy:
+    name: Check clippy lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: 'stable'
+          targets: 'wasm32-unknown-unknown'
+          components: clippy
+
+      - name: Run Clippy
+        run: cargo clippy --manifest-path=bully/Cargo.toml --target
+          wasm32-unknown-unknown --all-features
+
+  format:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          components: rustfmt
+
+      - name: Run cargo fmt
+        run: cargo fmt -- --manifest-path=bully/Cargo.toml --check || true
