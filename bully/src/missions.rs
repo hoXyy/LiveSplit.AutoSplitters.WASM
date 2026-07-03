@@ -1,6 +1,6 @@
 pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
     (
-        "chapter_1",
+        "CH1",
         "Chapter 1",
         &[
             (
@@ -28,7 +28,7 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
         ],
     ),
     (
-        "chapter_2",
+        "CH2",
         "Chapter 2",
         &[
             ("M_2_02", "Hattrick vs. Galloway", 0xEC, true),
@@ -51,7 +51,7 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
         ],
     ),
     (
-        "chapter_3",
+        "CH3",
         "Chapter 3",
         &[
             ("M_3_01", "Balls of Snow", 0x1CA, true),
@@ -70,7 +70,7 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
         ],
     ),
     (
-        "chapter_4",
+        "CH4",
         "Chapter 4",
         &[
             ("M_4_01", "Stronghold Assault", 0x236, true),
@@ -85,7 +85,7 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
         ],
     ),
     (
-        "chapter_5",
+        "CH5",
         "Chapter 5",
         &[
             ("M_5_01", "Making a Mark", 0x284, true),
@@ -159,7 +159,7 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
         ],
     ),
     (
-        "misc",
+        "MISC",
         "Misc",
         &[
             ("C_C_02", "Chapter 2 Cutscene", 0xC8, false),
