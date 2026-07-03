@@ -48,6 +48,7 @@ async fn main() {
                         watchers.update(&process, base_address);
 
                         if let Some(igt_pair) = &watchers.igt.pair {
+                            timer::pause_game_time(); // fixes game time glitching when paused
                             timer::set_game_time(Duration::milliseconds(igt_pair.current.into()));
 
                             if igt_pair.old == 0 && igt_pair.current != 0 {
