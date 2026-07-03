@@ -34,6 +34,7 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
             ("M_2_02", "Hattrick vs. Galloway", 0xEC, true),
             ("M_2_01", "Last Minute Shopping", 0xF2, true),
             ("M_2_03", "Prep Challenge", 0x182, true),
+            // this has special logic
             (
                 "M_2_03R",
                 "Prep Challenge Rounds (1 - Chad, 2 - Justin, 3 - )",
@@ -179,6 +180,18 @@ pub const MISSIONS: &[(&str, &str, &[(&str, &str, u32, bool)])] = &[
                 0xFE,
                 false,
             ),
+        ],
+    ),
+    (
+        "M_LAWN",
+        "Lawn Mowing",
+        &[
+            ("M_LAWN_01", "Park 1", 0x5D8, false),
+            ("M_LAWN_02", "Park 2", 0x5DE, false),
+            ("M_LAWN_03", "Park 3", 0x5E4, false),
+            ("M_LAWN_04", "House 1", 0x5EA, false),
+            ("M_LAWN_05", "House 2", 0x5F0, false),
+            ("M_LAWN_06", "House 3", 0x5F6, false),
         ],
     ),
     (

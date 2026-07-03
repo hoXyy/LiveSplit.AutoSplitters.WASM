@@ -32,8 +32,18 @@ pub fn register_settings() {
             continue;
         }
 
-        for &(key, mission, _, default) in missions {
-            add_bool(key, mission, default);
+        for &(key, mission_title, _, default) in missions {
+            if key == "M_2_03R" {
+                add_bool("M_2_03R1", "Chad (Prep Challenge)", false);
+                add_bool("M_2_03R2", "Justin (Prep Challenge)", false);
+                add_bool("M_2_03R3", "Parker (Prep Challenge)", false);
+                set_tooltip("M_2_03R1", "Additional split for Chad.");
+                set_tooltip("M_2_03R2", "Additional split for Justin.");
+                set_tooltip("M_2_03R3", "Additional split for Parker.");
+                continue;
+            }
+
+            add_bool(key, mission_title, default);
         }
     }
 

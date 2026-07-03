@@ -87,11 +87,67 @@ async fn main() {
                         if timer::state() == TimerState::Running {
                             for &(_, _, missions) in MISSIONS {
                                 for &(key, _, _, default_setting) in missions {
-                                    if setting_enabled(&settings_map, key, default_setting)
-                                        && !split_guard.missions_done.contains_key(key)
-                                    {
-                                        if let Some(mission_watcher) = watchers.missions.get(key) {
-                                            if let Some(mission_pair) = mission_watcher.pair {
+                                    if let Some(mission_watcher) = watchers.missions.get(key) {
+                                        if let Some(mission_pair) = mission_watcher.pair {
+                                            if key == "M_2_03R" {
+                                                if setting_enabled(
+                                                    &settings_map,
+                                                    "M_2_03R1",
+                                                    default_setting,
+                                                ) && !split_guard
+                                                    .missions_done
+                                                    .contains_key("M_2_03R1")
+                                                {
+                                                    if mission_pair.current == 1
+                                                        && mission_pair.old == 0
+                                                    {
+                                                        timer::split();
+                                                        split_guard
+                                                            .missions_done
+                                                            .insert("M_2_03R1".to_string(), true);
+                                                    }
+                                                }
+
+                                                if setting_enabled(
+                                                    &settings_map,
+                                                    "M_2_03R2",
+                                                    default_setting,
+                                                ) && !split_guard
+                                                    .missions_done
+                                                    .contains_key("M_2_03R2")
+                                                {
+                                                    if mission_pair.current == 2
+                                                        && mission_pair.old == 1
+                                                    {
+                                                        timer::split();
+                                                        split_guard
+                                                            .missions_done
+                                                            .insert("M_2_03R2".to_string(), true);
+                                                    }
+                                                }
+
+                                                if setting_enabled(
+                                                    &settings_map,
+                                                    "M_2_03R3",
+                                                    default_setting,
+                                                ) && !split_guard
+                                                    .missions_done
+                                                    .contains_key("M_2_03R3")
+                                                {
+                                                    if mission_pair.current == 3
+                                                        && mission_pair.old == 2
+                                                    {
+                                                        timer::split();
+                                                        split_guard
+                                                            .missions_done
+                                                            .insert("M_2_03R3".to_string(), true);
+                                                    }
+                                                }
+                                            }
+
+                                            if setting_enabled(&settings_map, key, default_setting)
+                                                && !split_guard.missions_done.contains_key(key)
+                                            {
                                                 if mission_pair.increased() {
                                                     timer::split();
                                                     split_guard
