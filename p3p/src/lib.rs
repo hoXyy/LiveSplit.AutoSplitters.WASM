@@ -25,7 +25,7 @@ async fn main() {
 
         timer::resume_game_time();
 
-        let loading_address: u64 = if process_name == "P4G.exe" {
+        let loading_address: u64 = if process_name == "P3P.exe" {
             0x9CF134
         } else {
             0x130AF74
