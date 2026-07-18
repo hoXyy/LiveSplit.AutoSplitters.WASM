@@ -1,5 +1,7 @@
 [build]
 target = "wasm32-unknown-unknown"
+
+[target.wasm32-unknown-unknown]
 rustflags = [
     # The auto splitting runtime supports all of these WebAssembly features.
     "-C",
