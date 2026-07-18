@@ -6,6 +6,7 @@ members = [
     "p4g",
     "sr2",
 ]
+exclude = ["autosplitter-helpers"]
 resolver = "2"
 
 [workspace.dependencies]

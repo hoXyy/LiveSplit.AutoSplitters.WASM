@@ -1,0 +1,11 @@
+[package]
+name = "autosplitter-helpers"
+version = "0.1.0"
+edition = "2021"
+description = "Small memory watcher helpers for LiveSplit autosplitters"
+license = "GPL-3.0-only"
+repository = "https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM"
+
+[dependencies]
+asr = { version = "0.1.0", git = "https://github.com/LiveSplit/asr" }
+bytemuck = "1"
