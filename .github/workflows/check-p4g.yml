@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'p4g/**'
+      - '.cargo/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
 
 jobs:
   clippy:
@@ -22,8 +25,7 @@ jobs:
           components: clippy
 
       - name: Run Clippy
-        run: cargo clippy --manifest-path=p4g/Cargo.toml --all-features --target
-          wasm32-unknown-unknown
+        run: cargo clippy --package p4g-load-remover --all-features
 
   format:
     name: Check formatting
@@ -37,4 +39,4 @@ jobs:
           components: rustfmt
 
       - name: Run cargo fmt
-        run: cargo fmt -- --check --manifest-path=p4g/Cargo.toml || true
+        run: cargo fmt --all -- --check
