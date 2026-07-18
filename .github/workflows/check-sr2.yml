@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'sr2/**'
+      - 'autosplitter-helpers/**'
       - '.cargo/**'
       - 'Cargo.toml'
       - 'Cargo.lock'

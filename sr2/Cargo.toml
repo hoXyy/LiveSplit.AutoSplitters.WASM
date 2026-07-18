@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 asr = { workspace = true, features = ["alloc", "derive"] }
+autosplitter-helpers = { path = "../autosplitter-helpers" }
 bytemuck.workspace = true
 dlmalloc.workspace = true
 
