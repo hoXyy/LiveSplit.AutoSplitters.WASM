@@ -10,6 +10,7 @@ pub struct Watchers {
     pub cutscene: MemoryWatcher<ArrayCString<255>>,
     pub save_load: MemoryWatcher<u8>,
     pub counters: MemoryWatcherMap<u32>,
+    last_cutscene: ArrayCString<255>,
 }
 
 impl Watchers {
@@ -50,6 +51,7 @@ impl Watchers {
             cutscene: MemoryWatcher::new([0x02127D10, 0x4, 0x0]),
             save_load: MemoryWatcher::new(0xA8EB88),
             counters,
+            last_cutscene: ArrayCString::new(),
         }
     }
 
@@ -58,7 +60,16 @@ impl Watchers {
         self.progress_percent.update(process, base);
         self.cutscene_load.update(process, base);
         self.cutscene.update(process, base);
+        if let Some(cutscene) = self.cutscene.pair() {
+            if cutscene.current.validate_utf8().is_ok() {
+                self.last_cutscene = cutscene.current;
+            }
+        }
         self.save_load.update(process, base);
         self.counters.update_all(process, base);
+    }
+
+    pub fn current_cutscene(&self) -> &str {
+        self.last_cutscene.validate_utf8().unwrap_or("")
     }
 }

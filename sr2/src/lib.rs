@@ -127,16 +127,14 @@ async fn main() {
                             }
 
                             if timer_state == TimerState::NotRunning && settings.timer_start {
-                                if let (Some(cutscene), Some(start_flag)) =
-                                    (watchers.cutscene.pair(), watchers.start_flag.pair())
-                                {
-                                    if let Ok(current_cutscene) = cutscene.current.validate_utf8() {
-                                        if current_cutscene == "TSSP01-01.cscx"
-                                            && start_flag.current == 1
-                                            && start_flag.old != start_flag.current
-                                        {
-                                            timer::start();
-                                        }
+                                let current_cutscene = watchers.current_cutscene();
+
+                                if let Some(start_flag) = watchers.start_flag.pair() {
+                                    if current_cutscene == "TSSP01-01.cscx"
+                                        && start_flag.current == 1
+                                        && start_flag.old != start_flag.current
+                                    {
+                                        timer::start();
                                     }
                                 }
                             }
