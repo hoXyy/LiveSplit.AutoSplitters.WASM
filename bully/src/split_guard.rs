@@ -38,7 +38,7 @@ impl SplitGuard {
         for &(_, _, missions) in MISSIONS {
             for &(key, _, _, _) in missions {
                 if let Some(watcher) = watchers.missions.get(key) {
-                    if let Some(pair) = watcher.pair {
+                    if let Some(pair) = watcher.pair() {
                         if pair.current > 0 {
                             asr::print_message(&format!(
                                 "Marking mission {key} as finished in split guard"
@@ -53,8 +53,8 @@ impl SplitGuard {
         let mut collected_gnome_count: u8 = 0;
         for i in 0..GNOMES_COUNT {
             let key = get_gnome_key(i);
-            if let Some(watcher) = watchers.gnomes.get(&key) {
-                if let Some(pair) = watcher.pair {
+            if let Some(watcher) = watchers.gnomes.get(i as usize) {
+                if let Some(pair) = watcher.pair() {
                     if pair.current > 0 {
                         collected_gnome_count = collected_gnome_count + 1;
                         asr::print_message(&format!(

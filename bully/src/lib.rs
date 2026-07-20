@@ -47,7 +47,7 @@ async fn main() {
                     loop {
                         watchers.update(&process, base_address);
 
-                        if let Some(igt_pair) = &watchers.igt.pair {
+                        if let Some(igt_pair) = watchers.igt.pair() {
                             timer::pause_game_time(); // fixes game time glitching when paused
                             timer::set_game_time(Duration::milliseconds(igt_pair.current.into()));
 
@@ -58,7 +58,7 @@ async fn main() {
                         }
 
                         if setting_enabled(&settings_map, "timer_reset", true) {
-                            if let Some(m1_state_pair) = &watchers.m1_state.pair {
+                            if let Some(m1_state_pair) = watchers.m1_state.pair() {
                                 if m1_state_pair.current == 17 && m1_state_pair.old == 0 {
                                     timer::reset();
                                 }
@@ -66,7 +66,7 @@ async fn main() {
                         }
 
                         if setting_enabled(&settings_map, "timer_start", true) {
-                            if let Some(m1_state_pair) = &watchers.m1_state.pair {
+                            if let Some(m1_state_pair) = watchers.m1_state.pair() {
                                 if m1_state_pair.current == 17 && m1_state_pair.old == 0 {
                                     timer::start();
                                     split_guard.clear();
@@ -77,7 +77,7 @@ async fn main() {
                         for &(_, _, missions) in MISSIONS {
                             for &(key, _, _, _) in missions {
                                 if let Some(watcher) = watchers.missions.get(key) {
-                                    if let Some(pair) = watcher.pair {
+                                    if let Some(pair) = watcher.pair() {
                                         timer::set_variable(key, &pair.current.to_string());
                                     }
                                 }
@@ -88,7 +88,7 @@ async fn main() {
                             for &(_, _, missions) in MISSIONS {
                                 for &(key, _, _, default_setting) in missions {
                                     if let Some(mission_watcher) = watchers.missions.get(key) {
-                                        if let Some(mission_pair) = mission_watcher.pair {
+                                        if let Some(mission_pair) = mission_watcher.pair() {
                                             // special logic for the prep challenge splits
                                             if key == "M_2_03R" {
                                                 if setting_enabled(&settings_map, "M_2_03R1", false)
@@ -155,8 +155,8 @@ async fn main() {
                             let mut collected_gnome_count: u8 = 0;
                             for i in 0..GNOMES_COUNT {
                                 let key = get_gnome_key(i);
-                                if let Some(gnome_watcher) = watchers.gnomes.get(&key) {
-                                    if let Some(pair) = gnome_watcher.pair {
+                                if let Some(gnome_watcher) = watchers.gnomes.get(i as usize) {
+                                    if let Some(pair) = gnome_watcher.pair() {
                                         if pair.current == 1 {
                                             if setting_enabled(&settings_map, &key, false)
                                                 && !split_guard.gnomes_done.contains_key(&key)

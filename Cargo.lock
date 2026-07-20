@@ -44,6 +44,7 @@ name = "bully-autosplitter"
 version = "0.1.0"
 dependencies = [
  "asr",
+ "autosplitter-helpers",
  "bytemuck",
  "dlmalloc",
 ]
