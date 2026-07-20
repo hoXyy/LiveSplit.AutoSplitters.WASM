@@ -40,6 +40,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "bully-autosplitter"
+version = "0.1.0"
+dependencies = [
+ "asr",
+ "bytemuck",
+ "dlmalloc",
+]
+
+[[package]]
 name = "bytemuck"
 version = "1.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

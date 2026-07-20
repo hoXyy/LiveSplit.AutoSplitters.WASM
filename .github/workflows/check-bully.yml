@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'bully/**'
+      - '.cargo/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
 
 jobs:
   clippy:
@@ -22,8 +25,7 @@ jobs:
           components: clippy
 
       - name: Run Clippy
-        run: cargo clippy --manifest-path=bully/Cargo.toml --target
-          wasm32-unknown-unknown --all-features
+        run: cargo clippy --package bully-autosplitter --all-features
 
   format:
     name: Check formatting
@@ -37,4 +39,4 @@ jobs:
           components: rustfmt
 
       - name: Run cargo fmt
-        run: cargo fmt -- --manifest-path=bully/Cargo.toml --check || true
+        run: cargo fmt --all -- --check

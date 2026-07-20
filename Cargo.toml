@@ -5,6 +5,7 @@ members = [
     "p3p",
     "p4g",
     "sr2",
+    "bully",
 ]
 exclude = ["autosplitter-helpers"]
 resolver = "2"

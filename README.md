@@ -7,6 +7,7 @@ Autosplitters for LiveSplit written for use with the new auto-splitting runtime
 - GTA IV Autosplitter and Load Remover (`gta4` folder)
 - Persona 3 Portable Load Remover (`p3p` folder)
 - GTA 3 Autosplitter (`gta3` folder)
+- Bully Autosplitter (`bully` folder)
 
 The latest compiled binaries are bundled into a single
 [release](https://github.com/hoXyy/LiveSplit.AutoSplitters.WASM/releases/tag/latest).
