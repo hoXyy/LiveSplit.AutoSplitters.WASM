@@ -45,19 +45,19 @@ async fn main() {
             .until_closes(async {
                 if let Ok(base_address) = process.get_module_address(PROCESS_NAME) {
                     if let Some(version) = Version::detect(&process, base_address) {
-                        let mut watchers = Watchers::new();
+                        let mut watchers = Watchers::new(version);
                         let mut split_guard = SplitGuard::new();
 
                         // JP shifts the gameState sentinel values by 4.
                         let gs_shift: u32 = if version == Version::Japanese { 4 } else { 0 };
 
                         loop {
-                            watchers.update(&process, base_address, version);
+                            watchers.update(&process, base_address);
 
                             let settings_map = Map::load();
                             let timer_state = timer::state();
 
-                            if let Some(gs) = &watchers.game_state.pair {
+                            if let Some(gs) = watchers.game_state.pair() {
                                 if setting_enabled(&settings_map, "timer_start", true)
                                     && gs.old == 8 + gs_shift
                                     && gs.current == 9 + gs_shift
@@ -83,7 +83,7 @@ async fn main() {
                                     if !setting_enabled(&settings_map, complete_key, true) {
                                         continue;
                                     }
-                                    if let Some(p) = &watchers.missions[i].pair {
+                                    if let Some(p) = watchers.missions[complete_key].pair() {
                                         if p.current > p.old {
                                             split_guard.missions_complete[i] = true;
                                             timer::split();
@@ -91,7 +91,7 @@ async fn main() {
                                     }
                                 }
 
-                                if let Some(text_pair) = &watchers.mission_text.pair {
+                                if let Some(text_pair) = watchers.mission_text.pair() {
                                     if text_pair.current != text_pair.old {
                                         let current_text =
                                             String::from_utf16(text_pair.current.as_slice())
@@ -134,7 +134,7 @@ async fn main() {
                                 }
 
                                 for (i, &(key, _, _, max)) in COLLECTIBLES.iter().enumerate() {
-                                    if let Some(p) = &watchers.collectibles[i].pair {
+                                    if let Some(p) = watchers.collectibles[key].pair() {
                                         if p.current <= p.old {
                                             continue;
                                         }
@@ -166,7 +166,7 @@ async fn main() {
 
                                 if setting_enabled(&settings_map, "btg_final_split", true) {
                                     if let (Some(hp), Some(tm)) =
-                                        (&watchers.te_helipad.pair, &watchers.te_timer.pair)
+                                        (watchers.te_helipad.pair(), watchers.te_timer.pair())
                                     {
                                         if hp.current == 1 && tm.current != tm.old {
                                             timer::split();
@@ -175,7 +175,7 @@ async fn main() {
                                 }
 
                                 if setting_enabled(&settings_map, "hundo_final_split", false) {
-                                    if let Some(progress_made) = &watchers.progress_made.pair {
+                                    if let Some(progress_made) = watchers.progress_made.pair() {
                                         if progress_made.current == 154 && progress_made.old != 154
                                         {
                                             timer::split();

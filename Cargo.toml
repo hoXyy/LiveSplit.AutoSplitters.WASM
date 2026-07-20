@@ -1,0 +1,24 @@
+[workspace]
+members = [
+    "gta3",
+    "gta4",
+    "p3p",
+    "p4g",
+    "sr2",
+]
+exclude = ["autosplitter-helpers"]
+resolver = "2"
+
+[workspace.dependencies]
+asr = { git = "https://github.com/LiveSplit/asr" }
+bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
+dlmalloc = { version = "0.2.4", features = ["global"] }
+
+[profile.release]
+lto = true
+panic = "abort"
+codegen-units = 1
+strip = true
+
+[profile.release.build-override]
+opt-level = 0

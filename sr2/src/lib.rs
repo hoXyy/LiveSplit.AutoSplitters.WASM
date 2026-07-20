@@ -1,119 +1,208 @@
-#![allow(unused_assignments)]
-use asr::timer::{self, TimerState};
-use once_cell::sync::OnceCell;
-use std::sync::Mutex;
+#![no_std]
+extern crate alloc;
 
-pub mod game;
-use game::{GameProcess, Variables};
+pub mod version;
+pub mod watchers;
 
-static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
-static CURRENT_CUTSCENE: OnceCell<Mutex<String>> = OnceCell::new();
+#[global_allocator]
+static ALLOC: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
 
-#[no_mangle]
-pub extern "C" fn update() {
-    let mut mutex = GAME_PROCESS.lock().unwrap();
+use asr::{
+    future::next_tick,
+    settings::{gui::Title, Gui},
+    timer::{self, TimerState},
+    Process,
+};
 
-    if mutex.is_none() {
-        // (Re)connect to the game and unpause game time
-        *mutex = GameProcess::connect("SR2_pc");
-    } else {
-        let game = mutex.as_mut().unwrap();
+use crate::{version::Version, watchers::Watchers};
 
-        // Make sure we're still connected to the game, pause game time if not
-        if !game.process.is_open() {
-            *mutex = None;
-            return;
-        }
+asr::async_main!(stable);
+asr::panic_handler!();
 
-        let vars = match game.state.update(&mut game.process) {
-            Some(v) => v,
-            None => {
-                asr::print_message("Error updating state!");
-                return;
-            }
-        };
+const PROCESS_NAME: &str = "SR2_pc.exe";
 
-        if let Some(cutscene) = vars.cutscene {
-            let cutscene_text = Variables::get_as_string(&cutscene.current).unwrap();
-            if cutscene_text != "" {
-                set_current_cutscene(cutscene_text.to_string());
-            }
-        }
+#[derive(Gui)]
+struct Settings {
+    /// Timer Control
+    _timer: Title,
+    /// Start timer automatically
+    #[default = true]
+    timer_start: bool,
+    /// Reset timer automatically
+    #[default = true]
+    timer_reset: bool,
+    /// Main
+    _main: Title,
+    /// Missions
+    #[default = true]
+    missions: bool,
+    /// Strongholds
+    #[default = true]
+    strongholds: bool,
+    /// 100%
+    hundo: bool,
+    /// Activities
+    _activities: Title,
+    /// Chop Shop
+    #[default = true]
+    chop_shop: bool,
+    /// Crowd Control
+    #[default = true]
+    crowd_control: bool,
+    /// Destruction Derby
+    #[default = true]
+    derby: bool,
+    /// Escort
+    #[default = true]
+    escort: bool,
+    /// Fight Club
+    #[default = true]
+    fight_club: bool,
+    /// FUZZ
+    #[default = true]
+    fuzz: bool,
+    /// Heli Assault
+    #[default = true]
+    heli_assault: bool,
+    /// Hitman
+    #[default = true]
+    hitman: bool,
+    /// Insurance Fraud
+    #[default = true]
+    fraud: bool,
+    /// Mayhem
+    #[default = true]
+    mayhem: bool,
+    /// Races
+    #[default = true]
+    races: bool,
+    /// Septic Avenger
+    #[default = true]
+    septic: bool,
+    /// Snatch
+    #[default = true]
+    snatch: bool,
+    /// Trafficking
+    #[default = true]
+    trafficking: bool,
+    /// Trail Blazing
+    #[default = true]
+    trail_blazing: bool,
+    /// Collectibles
+    _collectibles: Title,
+    /// Tags
+    tags: bool,
+    /// CDs
+    cd: bool,
+    /// Stunt Jumps
+    jumps: bool,
+    /// Barnstorming
+    barnstorming: bool,
+}
 
-        if timer::state() == TimerState::Running {
-            handle_load(&vars);
-            handle_split(&vars);
-            handle_reset();
-        }
+async fn main() {
+    let mut settings = Settings::register();
 
-        if timer::state() == TimerState::NotRunning {
-            handle_start(&vars);
-        }
+    loop {
+        let process = Process::wait_attach(PROCESS_NAME).await;
+        process
+            .until_closes(async {
+                if let Ok(base_address) = process.get_module_address(PROCESS_NAME) {
+                    if let Some(version) = Version::detect(&process, base_address) {
+                        let mut watchers = Watchers::new(version);
+
+                        loop {
+                            settings.update();
+                            watchers.update(&process, base_address);
+                            let timer_state = timer::state();
+
+                            if let (Some(save_load), Some(cutscene_load)) =
+                                (watchers.save_load.pair(), watchers.cutscene_load.pair())
+                            {
+                                if cutscene_load.current == 0 || save_load.current == 0 {
+                                    timer::pause_game_time();
+                                } else {
+                                    timer::resume_game_time();
+                                }
+                            }
+
+                            if timer_state == TimerState::NotRunning && settings.timer_start {
+                                if let (Some(cutscene), Some(start_flag)) =
+                                    (watchers.cutscene.pair(), watchers.start_flag.pair())
+                                {
+                                    if let Ok(current_cutscene) = cutscene.current.validate_utf8() {
+                                        if current_cutscene == "TSSP01-01.cscx"
+                                            && start_flag.current == 1
+                                            && start_flag.old != start_flag.current
+                                        {
+                                            timer::start();
+                                        }
+                                    }
+                                }
+                            }
+
+                            if timer_state == TimerState::Running {
+                                if settings.timer_reset {
+                                    if let Some(cutscene) = watchers.cutscene.pair() {
+                                        if cutscene.changed() {
+                                            if let Ok(current_cutscene) =
+                                                cutscene.current.validate_utf8()
+                                            {
+                                                if current_cutscene == "TSSP-INTRO2.cscx" {
+                                                    timer::reset();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if settings.hundo {
+                                    if let Some(progress_percent) = watchers.progress_percent.pair()
+                                    {
+                                        if progress_percent.current == 100
+                                            && progress_percent.changed()
+                                        {
+                                            timer::split();
+                                        }
+                                    }
+                                }
+
+                                let counter_settings = [
+                                    (settings.missions, "missions"),
+                                    (settings.strongholds, "strongholds"),
+                                    (settings.tags, "tags"),
+                                    (settings.cd, "cd"),
+                                    (settings.jumps, "jumps"),
+                                    (settings.barnstorming, "barnstorming"),
+                                    (settings.chop_shop, "chop_shop"),
+                                    (settings.crowd_control, "crowd_control"),
+                                    (settings.derby, "derby"),
+                                    (settings.escort, "escort"),
+                                    (settings.fight_club, "fight_club"),
+                                    (settings.fuzz, "fuzz"),
+                                    (settings.heli_assault, "heli_assault"),
+                                    (settings.hitman, "hitman"),
+                                    (settings.fraud, "fraud"),
+                                    (settings.mayhem, "mayhem"),
+                                    (settings.races, "races"),
+                                    (settings.septic, "septic"),
+                                    (settings.snatch, "snatch"),
+                                    (settings.trafficking, "trafficking"),
+                                    (settings.trail_blazing, "trail_blazing"),
+                                ];
+
+                                for (enabled, name) in counter_settings {
+                                    if enabled && watchers.counters[name].increased_by(1) {
+                                        timer::split();
+                                    }
+                                }
+                            }
+
+                            next_tick().await;
+                        }
+                    }
+                }
+            })
+            .await;
     }
-}
-
-fn handle_load(vars: &Variables) {
-    if vars.cutscene_load.current == 0 || vars.save_load.current == 0 {
-        timer::pause_game_time();
-    } else {
-        timer::resume_game_time();
-    }
-}
-
-fn handle_split(vars: &Variables) {
-    if vars.missions.current == vars.missions.old + 1
-        || vars.strongholds.current == vars.strongholds.old + 1
-        || vars.tags.current == vars.tags.old + 1
-        || vars.cds.current == vars.cds.old + 1
-        || vars.jumps.current == vars.jumps.old + 1
-        || vars.barnstorming.current == vars.barnstorming.old + 1
-        || vars.chop_shop.current == vars.chop_shop.old + 1
-        || vars.crowd_control.current == vars.crowd_control.old + 1
-        || vars.derby.current == vars.derby.old + 1
-        || vars.escort.current == vars.escort.old + 1
-        || vars.fight_club.current == vars.fight_club.old + 1
-        || vars.fuzz.current == vars.fuzz.old + 1
-        || vars.heli_assault.current == vars.heli_assault.old + 1
-        || vars.hitman.current == vars.hitman.old + 1
-        || vars.fraud.current == vars.fraud.old + 1
-        || vars.mayhem.current == vars.mayhem.old + 1
-        || vars.races.current == vars.races.old + 1
-        || vars.septic.current == vars.septic.old + 1
-        || vars.snatch.current == vars.snatch.old + 1
-        || vars.trafficking.current == vars.trafficking.old + 1
-        || vars.trail_blazing.current == vars.trail_blazing.old + 1
-    {
-        timer::split();
-    }
-
-    if vars.completion.current == 100 && vars.completion.current != vars.completion.old {
-        timer::split();
-    }
-}
-
-fn handle_start(vars: &Variables) {
-    asr::print_message(&get_current_cutscene());
-    if get_current_cutscene() == "TSSP01-01.cscx" {
-        if vars.start_flag.current == 1 && vars.start_flag.current != vars.start_flag.old {
-            timer::start();
-        }
-    }
-}
-
-fn handle_reset() {
-    if get_current_cutscene() == "TSSP-INTRO2.cscx" {
-        timer::reset();
-    }
-}
-
-fn ensure_cutscene() -> &'static Mutex<String> {
-    CURRENT_CUTSCENE.get_or_init(|| Mutex::new(String::new()))
-}
-
-fn get_current_cutscene() -> String {
-    ensure_cutscene().lock().unwrap().clone()
-}
-
-fn set_current_cutscene(cutscene: String) {
-    *ensure_cutscene().lock().unwrap() = cutscene;
 }
